@@ -1,5 +1,5 @@
 ﻿# A project for classification problem,
-# Weinong Wang, weinong.wang@hotmail.com
+### Weinong Wang, weinong.wang@hotmail.com
 
 # Requirements
 
