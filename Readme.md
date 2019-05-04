@@ -1,4 +1,4 @@
-﻿# A project for classification problem,
+﻿# A lightweight project for classification problem and bag of tricks are employed for better performance
 ### Weinong Wang, weinong.wang@hotmail.com
 
 # Requirements
@@ -15,6 +15,16 @@ Trained and Tested on Python3.6
 	PIL
 	tqdm
 	time
+	
+## Main Results
+MINC-2500 is a patch classification dataset with 2500 samples per category. This is a subset of MINC where samples have been sized to 362 x 362 and each category is sampled evenly. Error rate is employed for evaluating.
+|backbone|train1-vali1|train2-vali2|train3-vali3|train4-vali4|train5-vali5
+|---|---|---|---|---|---
+|resnet18|19%|19%|19%|19%|20%
+
+|backbone|train1-test1|train2-test2|train3-test3|train4-test4|train5-test5
+|---|---|---|---|---|---
+|resnet18|19%|19%|18%|19%|19%
 ## Characteristics
  1. basic data augmentation: horizontal/vertical  flip, random rot (90), color jitter, random erasing, test augmentation
  2.  multi backbones: Resnet, Desnsenet et. al
