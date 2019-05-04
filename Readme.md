@@ -17,7 +17,8 @@ Trained and Tested on Python3.6
 	time
 	
 ## Main Results
-MINC-2500 is a patch classification dataset with 2500 samples per category. This is a subset of MINC where samples have been sized to 362 x 362 and each category is sampled evenly. Error rate is employed for evaluating.
+MINC-2500 is a patch classification dataset with 2500 samples per category. This is a subset of MINC where samples have been sized to 362 x 362 and each category is sampled evenly. Error rate is employed for evaluating. Noting we can achieve a comparable results only based on resnet18 with state-od-the-arts.
+
 |backbone|train1-vali1|train2-vali2|train3-vali3|train4-vali4|train5-vali5
 |---|---|---|---|---|---
 |resnet18|19%|19%|19%|19%|20%
