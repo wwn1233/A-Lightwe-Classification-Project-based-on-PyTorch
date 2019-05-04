@@ -44,3 +44,9 @@ The data structure is following the Materials in Context Database (MINC)
 ## Test
  - Genaral version: 
  CUDA_VISIBLE_DEVICES=0 python experiments/recognition/main.py --dataset minc --loss CrossEntropyLoss --nclass  2 --backbone resnet18 --eval  --resume experiments/recognition/runs/minc/deepten/09-3/*.pth
+ 
+## Related Repos
+[PyTorch Encoding][PyTorch Encoding]
+
+
+[PyTorch Encoding]:https://github.com/zhanghang1989/PyTorch-Encoding
