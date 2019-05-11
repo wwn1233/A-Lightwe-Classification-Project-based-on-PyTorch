@@ -1,6 +1,9 @@
 ﻿# A lightweight project for classification problem and bag of tricks are employed for better performance
 ### Weinong Wang, weinong.wang@hotmail.com
 
+# News
+2019.05.11 add support for cifar and fashionmnist dataset
+
 # Requirements
 
 Trained and Tested on Python3.6
