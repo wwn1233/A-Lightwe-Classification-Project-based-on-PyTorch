@@ -20,7 +20,7 @@ class Options():
                             default='CrossEntropyLoss',
                             help='please choose loss function')
 
-        parser.add_argument('--nclass', type=int, default=2, metavar='N',
+        parser.add_argument('--nclass', type=int, default=23, metavar='N',
                             help='number of classes (default: 10)')
         parser.add_argument('--backbone', type=str, default='resnet50',
                             help='backbone name (default: inceptionresnetv2)')

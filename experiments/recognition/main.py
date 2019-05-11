@@ -40,10 +40,29 @@ def main():
         plot.show()
     if args.cuda:
         torch.cuda.manual_seed(args.seed)
+
+    ## set the class number according to the dataset
+    if args.dataset == 'minc':
+        args.nclass = 23
+        dataset_load = args.dataset
+    elif args.dataset == 'cifar10':
+        args.nclass = 10
+        dataset_load = args.dataset[:-2]
+    elif args.dataset == 'cifar100':
+        args.nclass = 100
+        dataset_load = args.dataset[:-3]
+    elif args.dataset == 'fashionmnist':
+        args.nclass = 10
+        dataset_load = args.dataset
+    else:
+        dataset_load = args.dataset
+        print('Remember to set the --nclass according to your dataset!')
     # init dataloader
-    dataset = importlib.import_module('dataset.' + args.dataset)
+    dataset = importlib.import_module('dataset.' + dataset_load)
     Dataloder = dataset.Dataloder
     train_loader, test_loader = Dataloder(args).getloader()
+
+
     # init the model
     models = importlib.import_module('model.' + args.model)
     model = models.Net(args)
@@ -92,13 +111,14 @@ def main():
         global best_pred, errlist_train
         train_loss, correct, total = 0, 0, 0
         # adjust_learning_rate(optimizer, args, epoch, best_pred)
+        # print(type(train_loader))
         tbar = tqdm(train_loader, desc='\r')
         # train_loss_end=0
         batch_idx_end = 0
         # err_end=0
         # total_end=0
         # correct_end=0
-        for batch_idx, (data, target, ids) in enumerate(tbar):
+        for batch_idx, (data, target) in enumerate(tbar):
             scheduler(optimizer, batch_idx, epoch, best_pred)
             # print(batch_idx)
             if args.cuda:
@@ -141,7 +161,7 @@ def main():
         batch_idx_end = 0
 
         with torch.no_grad():
-            for batch_idx, (data, target, ids) in enumerate(tbar):
+            for batch_idx, (data, target) in enumerate(tbar):
                 # print(target)
                 # print(ids)
                 if args.test_aug:
