@@ -42,18 +42,23 @@ class Net(nn.Module):
         # copying modules from pretrained models
         if self.backbone == 'resnet50':
             self.pretrained = resnet.resnet50(pretrained=True)
+            self.feat_num = 2048
         elif self.backbone == 'resnet101':
             self.pretrained = resnet.resnet101(pretrained=True)
+            self.feat_num = 2048
         elif self.backbone == 'resnet152':
             self.pretrained = resnet.resnet152(pretrained=True)
+            self.feat_num = 2048
         elif self.backbone == 'resnet18':
             self.pretrained = resnet.resnet18(pretrained=True)
+            self.feat_num = 512
         elif self.backbone == 'resnet34':
             self.pretrained = resnet.resnet34(pretrained=True)
+            self.feat_num = 1024
         else:
             raise RuntimeError('unknown backbone: {}'.format(self.backbone))
 
-        self.linear = nn.Linear(2048, 512)
+        self.linear = nn.Linear(self.feat_num, 512)
         self.head = nn.Sequential(
             # nn.Linear(512, 512),
             nn.BatchNorm1d(512),

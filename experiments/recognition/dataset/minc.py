@@ -224,7 +224,7 @@ class MINCDataloder(data.Dataset):
             if self.train:
                 _img_t = RandomErasing(mean=[0.0, 0.0, 0.0])(_img_t)   #
 
-        return  _img_t, _label,self.images[index]
+        return  _img_t, _label #,self.images[index]
 
     def __len__(self):
         return len(self.images)
@@ -248,9 +248,9 @@ class Dataloder():
             transforms.ToTensor(),
             normalize,
         ])
-        trainset = MINCDataloder(root=os.path.expanduser('/data1/WWN-classification-pure/minc-2500'),
+        trainset = MINCDataloder(root=os.path.expanduser('./data/minc-2500'),
             train=True, transform=transform_train)
-        testset = MINCDataloder(root=os.path.expanduser('/data1/WWN-classification-pure/minc-2500'),
+        testset = MINCDataloder(root=os.path.expanduser('./data/minc-2500'),
             train=False, transform=transform_test, test_aug = args.test_aug)
     
         kwargs = {'num_workers': 8, 'pin_memory': True} if args.cuda else {}
