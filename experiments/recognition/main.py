@@ -99,6 +99,8 @@ def main():
             optimizer.load_state_dict(checkpoint['optimizer'])
             print("=> loaded checkpoint '{}' (epoch {})"
                   .format(args.resume, checkpoint['epoch']))
+            args.lr = optimizer.param_groups[0]['lr']
+            # print(args.lr )
             for name, param in checkpoint['state_dict'].items():
                 print(name)
         else:

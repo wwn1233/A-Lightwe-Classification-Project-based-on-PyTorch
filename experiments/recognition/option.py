@@ -22,15 +22,17 @@ class Options():
 
         parser.add_argument('--nclass', type=int, default=23, metavar='N',
                             help='number of classes (default: 10)')
-        parser.add_argument('--backbone', type=str, default='resnet50',
+        parser.add_argument('--backbone', type=str, default='resnet50, resnet_reduce',
                             help='backbone name (default: inceptionresnetv2)')
+        parser.add_argument('--res_reduce_depth', type=int, default=20,
+                            help='num of blocj in resnet_reduce for cifar (20, 32, 44, 56 , 110)')
         parser.add_argument('--batch-size', type=int, default=32,
                             metavar='N', help='batch size for training (default: 128)')
         parser.add_argument('--test-batch-size', type=int, default=1,
                             metavar='N', help='batch size for testing (default: 256)')
         parser.add_argument('--epochs', type=int, default=60, metavar='N',
                             help='number of epochs to train (default: 300)')
-        parser.add_argument('--lr', type=float, default=0.0001, metavar='LR',
+        parser.add_argument('--lr', type=float, default=0.001, metavar='LR',
                             help='learning rate (default: 0.1)')
         parser.add_argument('--plot', action='store_true', default=False,
                             help='matplotlib')
@@ -41,12 +43,14 @@ class Options():
             help='network model type (default: densenet)')
 
         # training hyper params
-        parser.add_argument('--start_epoch', type=int, default=1,
+        parser.add_argument('--start_epoch', type=int, default=0,
             metavar='N', help='the epoch number to start (default: 0)')
         # lr setting
+        parser.add_argument('--solver_type', type=str, default='SGD', 
+            help='solver type (SGD, Adam, Rmsprop)')
         parser.add_argument('--lr-scheduler', type=str, default='step', 
             help='learning rate scheduler (default: step)')
-        parser.add_argument('--lr-step', type=int, default=30, metavar='LR',
+        parser.add_argument('--lr-step', type=str, default='30,', metavar='LR',
             help='learning rate step (default: 40)')
         # optimizer
         parser.add_argument('--momentum', type=float, default=0.9, 

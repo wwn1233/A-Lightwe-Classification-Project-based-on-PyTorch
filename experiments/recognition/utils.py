@@ -147,7 +147,8 @@ def get_optimizer(args, model, diff_LR=True):
     """
     if diff_LR and model.pretrained is not None:
         print('Using different learning rate for pre-trained features')
-        optimizer = torch.optim.SGD([
+        if args.solver_type == 'SGD':
+            optimizer = torch.optim.SGD([
                         {'params': model.pretrained.parameters()}, 
                         {'params': model.head.parameters(), 
                           'lr': args.lr*10},
@@ -155,13 +156,40 @@ def get_optimizer(args, model, diff_LR=True):
                     lr=args.lr,
                     momentum=args.momentum, 
                     weight_decay=args.weight_decay)
+        elif args.solver_type == 'Adam':
+            optimizer = torch.optim.Adam([
+                        {'params': model.pretrained.parameters()}, 
+                        {'params': model.head.parameters(), 
+                          'lr': args.lr*10},
+                    ], 
+                    lr=args.lr,
+                    weight_decay=args.weight_decay)
+        elif args.solver_type == 'Rmsprop':
+            optimizer = torch.optim.RMSprop([
+                        {'params': model.pretrained.parameters()}, 
+                        {'params': model.head.parameters(), 
+                          'lr': args.lr*10},
+                    ], 
+                    lr=args.lr,
+                    momentum=args.momentum, 
+                    weight_decay=args.weight_decay)
+        else:
+            raise KeyError("Unsupported optim: {}".format(args.solver_type))
     else:
-        # optimizer = torch.optim.SGD(model.parameters(), lr=args.lr,
-        #                             momentum=args.momentum, 
-        #                             weight_decay=args.weight_decay) 
-        optimizer = torch.optim.Adam(model.parameters(),  weight_decay= args.weight_decay)
+        if args.solver_type == 'SGD':
+            optimizer = torch.optim.SGD(model.parameters(), lr=args.lr,
+                                        momentum=args.momentum, 
+                                        weight_decay=args.weight_decay) 
+            # print(model.parameters())
+        elif args.solver_type == 'Adam':
+            optimizer = torch.optim.Adam(model.parameters(),  weight_decay= args.weight_decay)
+        elif args.solver_type == 'Rmsprop':
+            optimizer = torch.optim.RMSprop(model.parameters(),
+                                            momentum=args.momentum, 
+                                            weight_decay=args.weight_decay) 
+        else:
+            raise KeyError("Unsupported optim: {}".format(args.solver_type))
     return optimizer
-
 
 class LR_Scheduler(object):
     """Learning Rate Scheduler
@@ -182,11 +210,20 @@ class LR_Scheduler(object):
         print('Using {} LR Scheduler!'.format(self.mode))
         self.lr = args.lr
         if self.mode == 'step':
-            self.lr_step = args.lr_step
+            self.lr_step = eval(args.lr_step)
         else:
             self.niters = niters
             self.N = args.epochs * niters
         self.epoch = -1
+
+        if self.mode == 'step' and len(self.lr_step) > 1:
+            self.decay_steps_ind = 0
+            for i in range(0, len(self.lr_step)):
+                # print(self.lr_step)
+                # print()
+                if self.lr_step[i] >= args.start_epoch:
+                    self.decay_steps_ind = i
+                    break
 
     def __call__(self, optimizer, i, epoch, best_pred):
         if self.mode == 'cos':
@@ -197,7 +234,18 @@ class LR_Scheduler(object):
             T = (epoch - 1) * self.niters + i
             lr = self.lr * pow((1 - 1.0 * T / self.N), 0.9)
         elif self.mode == 'step':
-            lr = self.lr * (0.1 ** ((epoch - 1) // self.lr_step))
+            if len(self.lr_step) == 1:
+                lr = self.lr * (0.1 ** ((epoch - 1) // self.lr_step[0]))
+            else:
+                # print(epoch == self.lr_step[self.decay_steps_ind])
+                if self.decay_steps_ind < len(self.lr_step) and \
+                    epoch == self.lr_step[self.decay_steps_ind]:
+                    # print('WWN')
+                    lr = self.lr * 0.1
+                    self.lr = lr # update self.lr
+                    self.decay_steps_ind +=1
+                else:
+                    lr = self.lr
         else:
             raise RuntimeError('Unknown LR scheduler!')
         if epoch > self.epoch:
