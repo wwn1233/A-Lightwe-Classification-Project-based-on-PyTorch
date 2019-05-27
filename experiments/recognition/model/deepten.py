@@ -12,6 +12,7 @@ from torch.autograd import Variable
 import torch.nn.functional as F
 
 import torchvision.models as resnet
+from .resnet_reduce import resnet_reduce
 
 def weights_init_kaiming(m):
     classname = m.__class__.__name__
@@ -39,6 +40,7 @@ class Net(nn.Module):
         nclass=args.nclass
         super(Net, self).__init__()
         self.backbone = args.backbone
+        self.dataset = args.dataset
         # copying modules from pretrained models
         if self.backbone == 'resnet50':
             self.pretrained = resnet.resnet50(pretrained=True)
@@ -55,22 +57,31 @@ class Net(nn.Module):
         elif self.backbone == 'resnet34':
             self.pretrained = resnet.resnet34(pretrained=True)
             self.feat_num = 1024
+        elif self.backbone == 'resnet_reduce':
+            self.depth = args.res_reduce_depth
+            self.pretrained = resnet_reduce(depth = self.depth)
+            self.feat_num = self.pretrained.block.expansion * 64
         else:
             raise RuntimeError('unknown backbone: {}'.format(self.backbone))
 
-        self.linear = nn.Linear(self.feat_num, 512)
-        self.head = nn.Sequential(
-            # nn.Linear(512, 512),
-            nn.BatchNorm1d(512),
-            # nn.ReLU(inplace=True),
-            nn.LeakyReLU(0.1),
-            nn.Dropout(p=0.5)
-        )
+        if self.dataset == 'cifar10' or self.dataset == 'cefar100':
+            self.classifier = nn.Linear(self.feat_num,nclass)
+            # self.classifier.apply(weights_init_classifier)
 
-        self.head.apply(weights_init_kaiming)
+        else:
+            self.linear = nn.Linear(self.feat_num, 512)
+            self.head = nn.Sequential(
+                # nn.Linear(512, 512),
+                nn.BatchNorm1d(512),
+                # nn.ReLU(inplace=True),
+                nn.LeakyReLU(0.1),
+                nn.Dropout(p=0.5)
+            )
 
-        self.classifier = nn.Linear(512,nclass)
-        self.classifier.apply(weights_init_classifier)
+            self.head.apply(weights_init_kaiming)
+
+            self.classifier = nn.Linear(512,nclass)
+            self.classifier.apply(weights_init_classifier)
 
         self.softmax = nn.Softmax(1).cuda()
 
@@ -85,25 +96,36 @@ class Net(nn.Module):
         else:
             raise RuntimeError('unknown input type: ', type(x))
         # print(x)
-        x = self.pretrained.conv1(x)  
-        x = self.pretrained.bn1(x)
-        x = self.pretrained.relu(x)
-        # print(x)
-        # print(torch.sum(torch.abs(x -0.355846) < 0.00001))
-        x = self.pretrained.maxpool(x)
-        x = self.pretrained.layer1(x)
-        x = self.pretrained.layer2(x)
-        x = self.pretrained.layer3(x)
-        x = self.pretrained.layer4(x)
+        if self.backbone == 'resnet_reduce':
+            x = self.pretrained.res1(x)  
+            x = self.pretrained.res2(x)
+            x = self.pretrained.res3(x)
+            x = self.pretrained.res4(x)
+        else:
+            x = self.pretrained.conv1(x)  
+            x = self.pretrained.bn1(x)
+            x = self.pretrained.relu(x)
+            # print(x)
+            # print(torch.sum(torch.abs(x -0.355846) < 0.00001))
+            x = self.pretrained.maxpool(x)
+            x = self.pretrained.layer1(x)
+            x = self.pretrained.layer2(x)
+            x = self.pretrained.layer3(x)
+            x = self.pretrained.layer4(x)
 
-        x1 = F.max_pool2d(x, x.size()[2:])
-        x2 = F.avg_pool2d(x, x.size()[2:])
-        x = x1 + x2
+        if self.dataset == 'cifar10' or self.dataset == 'cefar100': # simple net for cifar
+            x = F.avg_pool2d(x, x.size()[2:])
+            x = x.view(x.size(0), -1)
+            f = None
+            x= self.classifier(x)
+        else:
+           x1 = F.max_pool2d(x, x.size()[2:])
+           x2 = F.avg_pool2d(x, x.size()[2:])
+           x = x1 + x2
+           x = x.view(x.size(0), -1)
+           f = self.linear(x)
+           x = self.head(f)
+           # print(x.size())
+           x= self.classifier(x)
 
-
-        x = x.view(x.size(0), -1)
-        f = self.linear(x)
-        x = self.head(f)
-
-        x= self.classifier(x)
-        return self.softmax(x), f, self.classifier.weight#self.softmax(x)
+        return x, f, self.classifier.weight#self.softmax(x)
