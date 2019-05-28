@@ -2,6 +2,7 @@
 ### Weinong Wang, weinong.wang@hotmail.com
 
 # News
+2019.05.28 add reduce-resnet and different optimizers for cifar and fashionminist dtatset
 2019.05.11 add support for cifar and fashionmnist dataset
 
 # Requirements
@@ -31,7 +32,7 @@ MINC-2500 is a patch classification dataset with 2500 samples per category. This
 |resnet18|19%|19%|18%|19%|19%
 ## Characteristics
  1. basic data augmentation: horizontal/vertical  flip, random rot (90), color jitter, random erasing, test augmentation
- 2.  multi backbones: Resnet, Desnsenet et. al
+ 2.  multi backbones: Resnet, Desnsenet, reduce-resnet et. al
  3. Focal loss; Label smooth; combining global max pooling and global average pooling; our orthgonal center loss based on subspace masking
 
 			
@@ -50,6 +51,8 @@ The data structure is following the Materials in Context Database (MINC)
  
 ## Related Repos
 [PyTorch Encoding][PyTorch Encoding]
+[RE][Random Erasing]
 
 
 [PyTorch Encoding]:https://github.com/zhanghang1989/PyTorch-Encoding
+[RE]:https://github.com/zhunzhong07/Random-Erasing
