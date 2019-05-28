@@ -53,7 +53,7 @@ The data structure is following the Materials in Context Database (MINC)
 ## Related Repos
 [PyTorch Encoding][PyTorch Encoding]
 
-[RE][Random Erasing]
+[Random Erasing][RE]
 
 
 [PyTorch Encoding]:https://github.com/zhanghang1989/PyTorch-Encoding
