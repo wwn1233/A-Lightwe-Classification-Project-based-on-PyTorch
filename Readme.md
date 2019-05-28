@@ -3,6 +3,7 @@
 
 # News
 2019.05.28 add reduce-resnet and different optimizers for cifar and fashionminist dtatset
+
 2019.05.11 add support for cifar and fashionmnist dataset
 
 # Requirements
