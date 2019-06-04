@@ -28,7 +28,7 @@ class Options():
                             help='num of blocj in resnet_reduce for cifar (20, 32, 44, 56 , 110)')
         parser.add_argument('--batch-size', type=int, default=32,
                             metavar='N', help='batch size for training (default: 128)')
-        parser.add_argument('--test-batch-size', type=int, default=1,
+        parser.add_argument('--test-batch-size', type=int, default=128,
                             metavar='N', help='batch size for testing (default: 256)')
         parser.add_argument('--epochs', type=int, default=60, metavar='N',
                             help='number of epochs to train (default: 300)')
@@ -75,6 +75,16 @@ class Options():
                             help='matplotlib')
         parser.add_argument('--ocsm', action='store_true', default=False,
                             help='orthogonal center learning for subspace learning')
+
+        # warm up
+        parser.add_argument('--warmup', action='store_true', default=False,
+                            help='')
+        parser.add_argument('--warmup_epoch', type=int, default=18,
+                            , help='epochs for warm up')
+        parser.add_argument('--warmup_factor', type=float, default=0.01,
+                            , help='the start lr for warm up')
+        
+
 
         self.parser = parser
 

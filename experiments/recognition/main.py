@@ -15,7 +15,7 @@ import torch.optim as optim
 from torch.autograd import Variable
 from option import Options
 from utils import *
-from utils import CrossEntropyLabelSmooth
+# from utils import CrossEntropyLabelSmooth
 from tqdm import tqdm
 from PIL import Image
 import time
@@ -72,7 +72,7 @@ def main():
     elif args.loss == 'LabelSmooth':
         criterion = CrossEntropyLabelSmooth(num_classes=args.nclass)
     elif args.loss == 'FocalLoss':
-        criterion = FocalLoss(gamma=2, alpha=0.2, \
+        criterion = FocalLoss(gamma=2, alpha=0.25, \
                                       num_classes= args.nclass,
                                       epsilon=0.1)
 
@@ -202,7 +202,8 @@ def main():
                 correct += is_right
                 total += target.size(0)
 
-                err = 100 - 100. * correct / total
+                err = 100. - 100. * float(correct) / float(total)
+                
                 tbar.set_description('Loss: %.3f | Err: %.3f%% (%d/%d)' % \
                                      (test_loss / (batch_idx + 1), err, total - correct, total))
                 batch_idx_end = batch_idx

@@ -225,7 +225,25 @@ class LR_Scheduler(object):
                     self.decay_steps_ind = i
                     break
 
+        ## warm up
+        self.warmup = args.warmup
+        self.warmup_epoch = args.warmup_epoch
+        self.warmup_factor = args.warmup_factor
+
     def __call__(self, optimizer, i, epoch, best_pred):
+        if self.warmup and epoch < self.warmup_epoch:
+            if self.mode == 'step':
+                assert self.lr_step[0] > self.warmup_epoch, 'the warm up epoch should be less than the first step in which the learning rate should be adjusted'
+            alpha = (self.lr - self.warmup_factor) / self.warmup_epoch
+            lr = epoch * alpha + self.warmup_factor
+            if epoch > self.epoch:
+            print('\n=>Epoches %i, learning rate = %.4f, \
+                previous best = %.4f' % (
+                epoch, lr, best_pred))
+            self.epoch = epoch
+            self._adjust_learning_rate(optimizer, lr)
+            return
+
         if self.mode == 'cos':
             T = (epoch - 1) * self.niters + i
             lr = 0.5 * self.lr * (1 + math.cos(1.0 * T / self.N * math.pi))
