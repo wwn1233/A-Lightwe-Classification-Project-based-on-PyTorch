@@ -80,9 +80,9 @@ class Options():
         parser.add_argument('--warmup', action='store_true', default=False,
                             help='')
         parser.add_argument('--warmup_epoch', type=int, default=18,
-                            , help='epochs for warm up')
+                            help='epochs for warm up')
         parser.add_argument('--warmup_factor', type=float, default=0.01,
-                            , help='the start lr for warm up')
+                            help='the start lr for warm up')
         
 
 

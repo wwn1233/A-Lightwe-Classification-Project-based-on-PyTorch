@@ -237,10 +237,10 @@ class LR_Scheduler(object):
             alpha = (self.lr - self.warmup_factor) / self.warmup_epoch
             lr = epoch * alpha + self.warmup_factor
             if epoch > self.epoch:
-            print('\n=>Epoches %i, learning rate = %.4f, \
-                previous best = %.4f' % (
-                epoch, lr, best_pred))
-            self.epoch = epoch
+                print('\n=>Epoches %i, learning rate = %.4f, \
+                    previous best = %.4f' % (
+                    epoch, lr, best_pred))
+                self.epoch = epoch
             self._adjust_learning_rate(optimizer, lr)
             return
 
