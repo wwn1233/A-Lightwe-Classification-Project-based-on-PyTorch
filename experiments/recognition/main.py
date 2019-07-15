@@ -40,6 +40,9 @@ def main():
         plot.show()
     if args.cuda:
         torch.cuda.manual_seed(args.seed)
+    ##check ohem
+    if arg.ohem > -1:
+        assert arg.ohem < args.batch_size, "args.ohem must be samller than args.batch_size"
 
     ## set the class number according to the dataset
     if args.dataset == 'minc':
@@ -125,10 +128,47 @@ def main():
             # print(batch_idx)
             if args.cuda:
                 data, target = data.cuda(), target.cuda()
+
+            if args.mixup:
+                lamada = np.random.beta(0.2,0.2)
+                batch_size = data.size()[0]
+                shuffle_index = torch.randperm(batch_size).cuda()
+                data = lamada * data + (1 - lamada) * data[shuffle_index]
+
             data, target = Variable(data), Variable(target)
             optimizer.zero_grad()
             output, f, center_weight = model(data)
-            loss = criterion(output, target)
+
+            if args.ohem > -1:
+                if args.loss == 'CrossEntropyLoss':
+                    if args.mixup:
+                        loss = lamada * nn.CrossEntropyLoss(reduce = False)(output, target).cpu().detach().numpy() + \
+                               (1 - lamada) *nn.CrossEntropyLoss(reduce = False)(output, target[shuffle_index]).cpu().detach().numpy()
+                    else:
+                        loss = nn.CrossEntropyLoss(reduce = False)(output, target).cpu().detach().numpy()
+                elif args.loss == 'CrossEntropyLabelSmooth':
+                    if args.mixup:
+                        loss = lamada * CrossEntropyLabelSmooth(num_classes = args.nclass, reduce = False)(output, target).cpu().detach().numpy() + \
+                               (1 - lamada) * CrossEntropyLabelSmooth(num_classes = args.nclass, reduce = False)(output, target[shuffle_index]).cpu().detach().numpy()
+                    else:
+                        loss = CrossEntropyLabelSmooth(num_classes = args.nclass, reduce = False)(output, target).cpu().detach().numpy()
+                else:
+                    raise Keyerror('OHEM for {} is not implemented!'.format(args.loss))
+                loss_index = np.argsort(loss)
+                targets_copy =  target.clone()
+                targets_copy[loss_index[0:args.ohem]] = -1
+                # print(target)
+                # loss = criterion(output, targets_copy)
+            else:
+                # loss= criterion(output, target)
+                targets_copy = target.clone()
+
+
+            if args.mixup:
+                loss = lamada * criterion(output, targets_copy) + (1-lamada) *criterion(output, targets_copy[shuffle_index])
+            else:
+                loss = criterion(output, targets_copy)
+
             if args.ocsm:
                 center_loss = 0.01 * criterion_center(f, target, center_weight)
             else:

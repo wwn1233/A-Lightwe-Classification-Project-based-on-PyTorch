@@ -83,6 +83,13 @@ class Options():
                             help='epochs for warm up')
         parser.add_argument('--warmup_factor', type=float, default=0.01,
                             help='the start lr for warm up')
+        # ohem atte mixup
+        parser.add_argument('--ohem', type=int, default=-1,
+                            help='')
+        parser.add_argument('--atte', action='store_true', default=False,
+                            help='')
+        parser.add_argument('--mixup', action='store_true', default=False,
+                            help='')
         
 
 

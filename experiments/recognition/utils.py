@@ -1,12 +1,9 @@
 ##+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-## Created by: Hang Zhang
-## ECE Department, Rutgers University
-## Email: zhang.hang@rutgers.edu
-## Copyright (c) 2017
-##
-## This source code is licensed under the MIT-style license found in the
-## LICENSE file in the root directory of this source tree 
+## Created by: Weinong Wang
+## Tencent, Youtu
+## Email: weinong.wang@hotmail.com
 ##+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
 
 import torch
 import shutil
@@ -20,7 +17,6 @@ import torch.nn as nn
 from torch.autograd import Variable
 import torch.nn.functional as F
 
-##Added by Weinong Wang, Tencent. ( CrossEntropyLabelSmooth, FocalLoss, CenterLoss_5)
 __all__ = ['get_optimizer', 'LR_Scheduler', 'save_checkpoint', 'progress_bar', 'CrossEntropyLabelSmooth','FocalLoss', 'CenterLoss_5']
 
 class CrossEntropyLabelSmooth(nn.Module):
@@ -34,12 +30,14 @@ class CrossEntropyLabelSmooth(nn.Module):
         num_classes (int): number of classes.
         epsilon (float): weight.
     """
-    def __init__(self, num_classes, epsilon=0.1, use_gpu=True):
+    def __init__(self, num_classes, epsilon=0.001, use_gpu=True, ignore_index = -1, reduce = True):
         super(CrossEntropyLabelSmooth, self).__init__()
         self.num_classes = num_classes
         self.epsilon = epsilon
         self.use_gpu = use_gpu
         self.logsoftmax = nn.LogSoftmax(dim=1)
+        self.ignore_index = ignore_index
+        self.reduce = reduce
 
     def forward(self, inputs, targets):
         """
@@ -47,11 +45,22 @@ class CrossEntropyLabelSmooth(nn.Module):
             inputs: prediction matrix (before softmax) with shape (batch_size, num_classes)
             targets: ground truth labels with shape (num_classes)
         """
+
+        index_pos = (targets != self.ignore_index).nonzero().squeeze()
+        targets = targets[index_pos]
+        inputs = inputs[index_pos, :]
+        # try:
+            # print(inputs)
         log_probs = self.logsoftmax(inputs)
+        # except RuntimeError:
+            # print(inputs)
         targets = torch.zeros(log_probs.size()).scatter_(1, targets.unsqueeze(1).data.cpu(), 1)
         if self.use_gpu: targets = targets.cuda()
         targets = (1 - self.epsilon) * targets + self.epsilon / self.num_classes
-        loss = (- targets * log_probs).mean(0).sum()
+        if self.reduce:
+            loss = (- targets * log_probs).mean(0).sum()  # * torch.from_numpy(np.array([1.0 , 4.0])).cuda().float()
+        else:
+            loss = (- targets * log_probs ).mean(1) # * torch.from_numpy(np.array([1.0 , 4.0])).cuda().float()
         return loss
 
 

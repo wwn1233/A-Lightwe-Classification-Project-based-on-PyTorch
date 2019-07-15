@@ -2,6 +2,8 @@
 ### Weinong Wang, weinong.wang@hotmail.com
 
 # News
+2019.07.15 add OHEM and Mixup methods
+
 2019.06.06 add warm up method of lr
 
 2019.05.28 add reduce-resnet and different optimizers for cifar and fashionminist dtatset
