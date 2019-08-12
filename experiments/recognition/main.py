@@ -41,8 +41,8 @@ def main():
     if args.cuda:
         torch.cuda.manual_seed(args.seed)
     ##check ohem
-    if arg.ohem > -1:
-        assert arg.ohem < args.batch_size, "args.ohem must be samller than args.batch_size"
+    if args.ohem > -1:
+        assert args.ohem < args.batch_size, "args.ohem must be samller than args.batch_size"
 
     ## set the class number according to the dataset
     if args.dataset == 'minc':
@@ -71,9 +71,9 @@ def main():
     model = models.Net(args)
     # criterion and optimizer
     if args.loss == 'CrossEntropyLoss':
-        criterion = nn.CrossEntropyLoss()
+        criterion = nn.CrossEntropyLoss(ignore_index = -1)
     elif args.loss == 'LabelSmooth':
-        criterion = CrossEntropyLabelSmooth(num_classes=args.nclass)
+        criterion = CrossEntropyLabelSmooth(num_classes=args.nclass, ignore_index = -1)
     elif args.loss == 'FocalLoss':
         criterion = FocalLoss(gamma=2, alpha=0.25, \
                                       num_classes= args.nclass,
@@ -156,7 +156,7 @@ def main():
                     raise Keyerror('OHEM for {} is not implemented!'.format(args.loss))
                 loss_index = np.argsort(loss)
                 targets_copy =  target.clone()
-                targets_copy[loss_index[0:args.ohem]] = -1
+                targets_copy[loss_index[0:-args.ohem]] = -1
                 # print(target)
                 # loss = criterion(output, targets_copy)
             else:
