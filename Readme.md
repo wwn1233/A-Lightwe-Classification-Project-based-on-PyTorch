@@ -33,10 +33,34 @@ Trained and Tested on Python3.6
 |[Deep-TEN]|-|-|-|-|-|-|-|-|-|-|19.4%
 |ours|19.0%|19.0%|19.0%|19.0%|19.0%|18.0%|19.0%|19.0%|20.0%|19.0%|19.0%
 
++ CIFAR100. In this experiment, we choose the reduced resnet as our backbone network(you can choose yours).
+
+||Models|Base|+RE|+Mixup
+|---|---|---|---|---|---|---|---|---|---|---|---
+|[RE]|ResNet-20|30.84%|29.87%|-
+|ours|ResNet-20|29.85%|28.61%|27.7%
++ More dataset coming soon ......
+
 ## Characteristics
- 1. basic data augmentation: horizontal/vertical  flip, random rot (90), color jitter, random erasing, test augmentation
- 2.  multi backbones: Resnet, Desnsenet, reduce-resnet et. al
- 3. Focal loss; Label smooth; combining global max pooling and global average pooling; our orthgonal center loss based on subspace masking
+ 1. Basic data augmentation methods
+	- horizontal/vertical flip
+	- random rot (90)
+	- color jitter
+	- random erasing
+	- test augmentation
+	- lighting noise
+	- mixup
+ 2.  Multiple backbones
+ 	- Resnet
+	- Desnsenet
+	- Reduced-resnet
+ 3. Other methods
+	- Focal loss
+	- Label smooth
+	- Combining global max pooling and global average pooling
+	- Orthgonal center loss based on subspace masking
+	- Learning rate warmup
+	- OHEM(online hard example mining)
 
 			
 ## Data Preparation
