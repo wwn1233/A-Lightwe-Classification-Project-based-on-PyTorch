@@ -74,9 +74,11 @@ Training and Testing on Python3.5
 
 ## Train
 + MINC-2500
-python experiments/recognition/main.py - -dataset minc - -loss CrossEntropyLoss - -nclass  23 - -backbone resnet50 - -checkname test - -ocsm
+
+> python experiments/recognition/main.py - -dataset minc - -loss CrossEntropyLoss - -nclass  23 - -backbone resnet50 - -checkname test - -ocsm
 + CIFAR100
-python experiments/recognition/main.py - -backbone resnet_reduce - -res_reduce_depth 20 - -solver_type SGD - -lr-step 200,300 - -dataset cifar100 - -lr 0.1 - -epochs 375 - -batch-size 384 - -mixup
+
+> python experiments/recognition/main.py - -backbone resnet_reduce - -res_reduce_depth 20 - -solver_type SGD - -lr-step 200,300 - -dataset cifar100 - -lr 0.1 - -epochs 375 - -batch-size 384 - -mixup
 
 Note: (- -lr-step 200,300) indicates that leanrning rate is decayed by 10 at 200-th and 300-th epoch; (- -lr-step 200,)  indicates that learning rate is decayed by 10 evary 200 epochs. (- - batch-size 384 - -ohem 192) indicates choosing 192 hard examples from 384 instances.
 
@@ -84,10 +86,10 @@ Note: (- -lr-step 200,300) indicates that leanrning rate is decayed by 10 at 200
 ## Test
 + MINC-2500. For example:
 
-python experiments/recognition/main.py - -dataset minc - -nclass  23 - -backbone resnet18 - -test-batch-size 128 - -eval  --resume  experiments/recognition/runs/minc/deepten/09-3/*.pth
+> python experiments/recognition/main.py - -dataset minc - -nclass  23 - -backbone resnet18 - -test-batch-size 128 - -eval  --resume  experiments/recognition/runs/minc/deepten/09-3/*.pth
 + CIFAR100. For example:
 
-python experiments/recognition/main.py - -backbone resnet_reduce - -res_reduce_depth 20 - -dataset cifar100 - -test-batch-size 128 - -eval  --resume experiments/recognition/runs/cifar100/deepten/0/*.pth
+> python experiments/recognition/main.py - -backbone resnet_reduce - -res_reduce_depth 20 - -dataset cifar100 - -test-batch-size 128 - -eval  --resume experiments/recognition/runs/cifar100/deepten/0/*.pth
  
 ## Related Repos
 [PyTorch Encoding][PyTorch Encoding]
