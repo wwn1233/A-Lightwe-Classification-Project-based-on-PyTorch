@@ -36,7 +36,7 @@ Trained and Tested on Python3.6
 + CIFAR100. In this experiment, we choose the reduced resnet as our backbone network(you can choose yours).
 
 ||Models|Base|+RE|+Mixup
-|---|---|---|---|---|---|---|---|---|---|---|---
+|---|---|---|---|---
 |[RE]|ResNet-20|30.84%|29.87%|-
 |ours|ResNet-20|29.85%|28.61%|27.7%
 
@@ -51,12 +51,10 @@ Trained and Tested on Python3.6
 	- test augmentation
 	- lighting noise
 	- mixup
-	
- 2.  Multiple backbones
+ 2. Multiple backbones
  	- Resnet
 	- Desnsenet
 	- Reduced-resnet
-	
  3. Other methods
 	- Focal loss
 	- Label smooth
