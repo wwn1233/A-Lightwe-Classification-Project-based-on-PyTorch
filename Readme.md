@@ -13,7 +13,7 @@
 # Requirements
 
 Trained and Tested on Python3.6
- 1. pytorch >= 0.4.0
+ 1. pytorch = 0.4.0
 	torchvision>=0.2.0
 	matplotlib
 	numpy
@@ -24,17 +24,15 @@ Trained and Tested on Python3.6
 	PIL
 	tqdm
 	time
-	
+
 ## Main Results
-MINC-2500 is a patch classification dataset with 2500 samples per category. This is a subset of MINC where samples have been sized to 362 x 362 and each category is sampled evenly. Error rate is employed for evaluating. We can achieve a comparable results only based on resnet50 with state-od-the-arts.
++ MINC-2500 is a patch classification dataset with 2500 samples per category. This is a subset of MINC where samples have been sized to 362 x 362 and each category is sampled evenly. Error rate and five fold cross validation are employed for evaluating. Based on resnet50, we can achieve a comparable result with state-od-the-arts.
 
-|backbone|train1-vali1|train2-vali2|train3-vali3|train4-vali4|train5-vali5
-|---|---|---|---|---|---
-|resnet50|19%|19%|19%|19%|20%
+||train1-vali1|train1-test1|train2-vali2|train2-test2|train3-vali3|train3-test3|train4-vali4|train4-test4|train5-vali5|train5-test5|Average
+|---|---|---|---|---|---|---|---|---|---|---|---
+|[Deep-TEN]|-|-|-|-|-|-|-|-|-|-|19.4%
+|ours|19.0%|19.0%|19.0%|19.0%|19.0%|18.0%|19.0%|19.0%|20.0%|19.0%|19.0%
 
-|backbone|train1-test1|train2-test2|train3-test3|train4-test4|train5-test5
-|---|---|---|---|---|---
-|resnet50|19%|19%|18%|19%|19%
 ## Characteristics
  1. basic data augmentation: horizontal/vertical  flip, random rot (90), color jitter, random erasing, test augmentation
  2.  multi backbones: Resnet, Desnsenet, reduce-resnet et. al
@@ -63,3 +61,4 @@ The data structure is following the Materials in Context Database (MINC)
 [PyTorch Encoding]:https://github.com/zhanghang1989/PyTorch-Encoding
 
 [RE]:https://github.com/zhunzhong07/Random-Erasing
+[Deep-TEN]:http://openaccess.thecvf.com/content_cvpr_2017/papers/Zhang_Deep_TEN_Texture_CVPR_2017_paper.pdf
