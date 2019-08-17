@@ -39,6 +39,7 @@ Trained and Tested on Python3.6
 |---|---|---|---|---|---|---|---|---|---|---|---
 |[RE]|ResNet-20|30.84%|29.87%|-
 |ours|ResNet-20|29.85%|28.61%|27.7%
+
 + More dataset coming soon ......
 
 ## Characteristics
@@ -50,10 +51,12 @@ Trained and Tested on Python3.6
 	- test augmentation
 	- lighting noise
 	- mixup
+	
  2.  Multiple backbones
  	- Resnet
 	- Desnsenet
 	- Reduced-resnet
+	
  3. Other methods
 	- Focal loss
 	- Label smooth
