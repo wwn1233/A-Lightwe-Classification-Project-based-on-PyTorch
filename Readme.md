@@ -12,7 +12,7 @@
 
 # Requirements
 
-Trained and Tested on Python3.5
+Training and Testing on Python3.5
 
 	pytorch = 0.4.0
 	torchvision>=0.2.0
